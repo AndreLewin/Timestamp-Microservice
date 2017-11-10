@@ -19,15 +19,22 @@ app.get('/:date', (req, res) => {
   // Get the date from the URL
   const rawDate = req.params.date;
   
-  const acceptedFormats = [
+  const supportedFormats = [
     'YYYY-MM-DD', 'DD-MM-YYYY',
     'YYYY/MM/DD', 'MM/DD/YYYY',
     'MMMM DD, YYYY', 'DD MMMM, YYYY',
     'MMMM DD YYYY', 'DD MMMM YYYY'
   ];
   
-  // Parse the date using moment.js
-  const date = moment(rawDate, acceptedFormats);
+  // Check if the given date is a unix timestamp (number only)
+  // It will be interpreted as milliseconds  
+  const isUnixTimestamp = /^[0-9]*$/.test(rawDate);
+  /// console.log("Is it a number? " + isUnixTimestamp);
+  
+  // If it is an Unix Timestamp, use it directly,
+  // or parse the date with the supported formats
+  const date = isUnixTimestamp ? moment(parseInt(rawDate)) : moment(rawDate, supportedFormats);
+  /// console.log("What is the parsed unix date? " + date);
   
   // Format the answer
   const answer = {
